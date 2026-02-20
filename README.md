@@ -83,7 +83,7 @@ Create a `.env` file (or edit the existing one):
 ```env
 PORT=5000
 MONGO_URI=mongodb://localhost:27017/reviewrate
-JWT_SECRET=some_long_random_string_here
+JWT_SECRET= FThziJmg8RrYumiinSXHFtfJKu20KpTipzWoqRDxZYD
 ADMIN_SECRET=graffers@admin2024
 ```
 
