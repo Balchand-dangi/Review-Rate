@@ -86,6 +86,12 @@ MONGO_URI=mongodb://localhost:27017/reviewrate
 JWT_SECRET= FThziJmg8RrYumiinSXHFtfJKu20KpTipzWoqRDxZYD
 ADMIN_SECRET=graffers@admin2024
 ```
+admin: dangibalchand935@gmail.com
+       Balchand@123
+
+User: dineshdangi97@gmail.com
+      Dinesh@123
+
 
 Then:
 

@@ -52,93 +52,98 @@ const formatDate = (d) => {
 /* ---------- Component ---------- */
 const CompanyCard = ({ company }) => {
   return (
-    <div
-      style={{
-        background: '#ffffff',
-        border: '1px solid #e5e7eb',
-        borderRadius: 12,
-        padding: '20px 24px',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 20,
-        boxShadow: '0 1px 4px rgba(0,0,0,0.05)',
-        transition: 'box-shadow 0.18s',
-      }}
-      onMouseEnter={e => e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.10)'}
-      onMouseLeave={e => e.currentTarget.style.boxShadow = '0 1px 4px rgba(0,0,0,0.05)'}
-    >
-      {/* Logo square */}
-      <div
-        style={{
-          width: 80,
-          height: 80,
-          minWidth: 80,
-          background: getBgColor(company.name),
-          borderRadius: 10,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          overflow: 'hidden',
-        }}
-      >
-        {company.logoUrl
-          ? <img src={company.logoUrl} alt={company.name} style={{ width: 60, height: 60, objectFit: 'contain' }} />
-          : <span style={{ color: '#fff', fontWeight: 800, fontSize: 22 }}>{getInitials(company.name)}</span>
+    <>
+      <style>{`
+        .cc-card {
+          background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+          padding: 20px 24px;
+          display: flex; flex-direction: row; align-items: center; gap: 20px;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+          transition: box-shadow 0.18s;
         }
-      </div>
+        .cc-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
+        .cc-logo {
+          width: 80px; height: 80px; min-width: 80px;
+          border-radius: 10px;
+          display: flex; align-items: center; justify-content: center;
+          overflow: hidden; flex-shrink: 0;
+        }
+        .cc-info { flex: 1; min-width: 0; }
+        .cc-name {
+          font-size: 17px; font-weight: 700; color: #111827;
+          margin: 0 0 4px; white-space: nowrap;
+          overflow: hidden; text-overflow: ellipsis;
+        }
+        .cc-address {
+          font-size: 13px; color: #6b7280;
+          margin: 0 0 10px;
+          display: flex; align-items: center; gap: 4px;
+          overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .cc-rating-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .cc-stars { display: flex; gap: 2px; align-items: center; }
+        .cc-right {
+          display: flex; flex-direction: column;
+          align-items: flex-end; justify-content: space-between;
+          gap: 14px; min-width: 130px; align-self: stretch; flex-shrink: 0;
+        }
+        .cc-date { font-size: 12px; color: #9ca3af; white-space: nowrap; }
+        .cc-btn {
+          display: inline-block; background: #1f2937; color: #fff;
+          padding: 9px 20px; border-radius: 8px; font-weight: 600;
+          font-size: 14px; text-decoration: none; white-space: nowrap;
+          text-align: center; transition: background 0.15s;
+        }
+        .cc-btn:hover { background: #374151; }
 
-      {/* Middle info */}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111827', margin: 0, marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {company.name}
-        </h3>
-        <p style={{ fontSize: 13, color: '#6b7280', margin: 0, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 4 }}>
-          <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth={2}>
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-            <circle cx={12} cy={9} r={2.5} />
-          </svg>
-          {company.address}
-        </p>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontWeight: 700, fontSize: 15, color: '#111827' }}>{company.avgRating}</span>
-          <div style={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-            {renderStars(company.avgRating)}
+        @media (max-width: 520px) {
+          .cc-card { flex-direction: column; align-items: flex-start; padding: 16px; gap: 12px; }
+          .cc-logo { width: 56px; height: 56px; min-width: 56px; }
+          .cc-right { flex-direction: row; min-width: 0; width: 100%; align-items: center; align-self: auto; }
+          .cc-btn { flex: 1; text-align: center; }
+          .cc-name { white-space: normal; }
+        }
+      `}</style>
+
+      <div className="cc-card">
+        {/* Logo */}
+        <div className="cc-logo" style={{ background: getBgColor(company.name) }}>
+          {company.logoUrl
+            ? <img src={company.logoUrl} alt={company.name} style={{ width: 60, height: 60, objectFit: 'contain' }} />
+            : <span style={{ color: '#fff', fontWeight: 800, fontSize: 22 }}>{getInitials(company.name)}</span>
+          }
+        </div>
+
+        {/* Middle info */}
+        <div className="cc-info">
+          <h3 className="cc-name">{company.name}</h3>
+          <p className="cc-address">
+            <svg width={13} height={13} viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth={2} style={{ flexShrink: 0 }}>
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+              <circle cx={12} cy={9} r={2.5} />
+            </svg>
+            {company.address}
+          </p>
+          <div className="cc-rating-row">
+            <span style={{ fontWeight: 700, fontSize: 15, color: '#111827' }}>{company.avgRating}</span>
+            <div className="cc-stars">{renderStars(company.avgRating)}</div>
+            {company.reviewCount > 0 && (
+              <span style={{ fontSize: 13, color: '#6b7280' }}>{company.reviewCount} Reviews</span>
+            )}
           </div>
-          {company.reviewCount > 0 && (
-            <span style={{ fontSize: 13, color: '#6b7280' }}>{company.reviewCount} Reviews</span>
+        </div>
+
+        {/* Right: date + button */}
+        <div className="cc-right">
+          {company.foundedOn && (
+            <span className="cc-date">Founded {formatDate(company.foundedOn)}</span>
           )}
+          <Link to={`/company/${company._id}`} className="cc-btn">
+            Detail Review
+          </Link>
         </div>
       </div>
-
-      {/* Right: date + button */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', justifyContent: 'space-between', gap: 14, minWidth: 140, alignSelf: 'stretch' }}>
-        {company.foundedOn && (
-          <span style={{ fontSize: 12, color: '#9ca3af', whiteSpace: 'nowrap' }}>
-            Founded on {formatDate(company.foundedOn)}
-          </span>
-        )}
-        <Link
-          to={`/company/${company._id}`}
-          style={{
-            display: 'inline-block',
-            background: '#1f2937',
-            color: '#ffffff',
-            padding: '9px 20px',
-            borderRadius: 8,
-            fontWeight: 600,
-            fontSize: 14,
-            textDecoration: 'none',
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-          }}
-          onMouseEnter={e => e.currentTarget.style.background = '#374151'}
-          onMouseLeave={e => e.currentTarget.style.background = '#1f2937'}
-        >
-          Detail Review
-        </Link>
-      </div>
-    </div>
+    </>
   );
 };
 
