@@ -12,9 +12,6 @@ export const AuthProvider = ({ children }) => {
     const savedUser = localStorage.getItem('user');
 
     if (token && savedUser) {
-      // Bug fix: restore user state from localStorage on page refresh
-      // Previously, only the axios header was set but user was never restored,
-      // making the app treat a logged-in user as logged-out after every refresh.
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       try {
         setUser(JSON.parse(savedUser));
@@ -30,9 +27,9 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const res = await axios.post('/api/auth/login', { email, password });
     localStorage.setItem('token', res.data.token);
-    // Bug fix: persist user object so it survives a page refresh
     localStorage.setItem('user', JSON.stringify(res.data.user));
     axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+    // Ye line pure frontend ke HTTP layer ka behaviour change kar deti hai Ab se axios ki har request me automatically token jayega
     setUser(res.data.user);
   };
 

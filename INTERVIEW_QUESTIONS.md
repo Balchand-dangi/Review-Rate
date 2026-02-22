@@ -3,6 +3,36 @@
 A comprehensive collection of interview questions across every technology and concept used in this project.
 
 ---
+<!-- ⚡ Performance optimizations already present in company datails page
+
+✅ parallel fetching
+✅ request cancellation
+✅ selective re-fetch
+✅ conditional rendering -->
+<!-- 
+🧩 Second problem → Memory leak
+
+User page leave kar gaya
+component unmount ho gaya
+
+but:
+
+request complete hua
+aur ye run hua:
+
+setCompany(...)
+
+React bolega:
+
+Can't perform a React state update on an unmounted component
+
+Ye:
+
+❌ memory leak
+❌ warning
+❌ performance issue -->
+
+
 
 ## 📋 Table of Contents
 

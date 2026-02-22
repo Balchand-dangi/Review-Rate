@@ -23,7 +23,7 @@ exports.addReview = async (req, res) => {
 
 exports.getReviews = async (req, res) => {
     try {
-        const { companyId } = req.params;         // ✅ route param se lo
+        const { companyId } = req.params;         // route param se lo
         const { sort = 'newest' } = req.query;    // sort query param se lo
         const reviews = await Review.find({ companyId })
             .populate('userId', 'fullName')
@@ -37,14 +37,21 @@ exports.getReviews = async (req, res) => {
 exports.likeReview = async (req, res) => {
     try {
         const review = await Review.findById(req.params.id);
-        // Bug fix: null check before accessing review.likes
         if (!review) return res.status(404).json({ msg: 'Review not found' });
 
-        if (!review.likes.some(like => like.userId.toString() === req.user._id.toString())) {
+        const userId = req.user._id.toString();
+        const alreadyLiked = review.likes.some(like => like.userId.toString() === userId);
+
+        if (alreadyLiked) {
+            // Unlike: remove the user's like
+            review.likes = review.likes.filter(like => like.userId.toString() !== userId);
+        } else {
+            // Like: add the user's like
             review.likes.push({ userId: req.user._id });
-            await review.save();
         }
-        res.json({ likes: review.likes.length });
+
+        await review.save();
+        res.json({ likes: review.likes.length, isLiked: !alreadyLiked });
     } catch (err) {
         res.status(500).json({ msg: err.message });
     }

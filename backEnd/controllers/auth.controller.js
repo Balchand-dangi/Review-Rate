@@ -15,7 +15,7 @@ exports.register = async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.status(201).json({ token, user: { id: user._id, email, fullName, role } });
   } catch (err) {
-    if (err.code === 11000) {
+    if (err.code === 11000) {    //MongoDB unique index error.
       return res.status(400).json({ msg: 'Email already registered. Please log in.' });
     }
     res.status(400).json({ msg: err.message });

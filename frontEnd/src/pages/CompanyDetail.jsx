@@ -5,6 +5,13 @@ import { AuthContext } from '../context/AuthContext';
 import ReviewForm from '../components/ReviewForm';
 import ReviewCard from '../components/ReviewCard';
 
+// When navigating quickly between pages, multiple API requests can be in flight simultaneously.
+// If an earlier request resolves after a later one, it can overwrite the correct state, causing a race condition.
+
+// To prevent this, I used AbortController to cancel the previous request whenever a new one is initiated or the component unmounts.
+// This ensures that only the latest response updates the state and also prevents memory leaks.
+
+
 const StarFilled = () => (
   <svg width={18} height={18} viewBox="0 0 24 24" fill="#f59e0b" style={{ display: 'block' }}>
     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
@@ -30,6 +37,7 @@ const CompanyDetail = () => {
   const [reviews, setReviews] = useState([]);
   const [sortReviews, setSortReviews] = useState('newest');
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const abortRef = useRef(null);
 
   // ── Parallel fetch on mount: company + reviews at the same time ──
@@ -39,20 +47,24 @@ const CompanyDetail = () => {
     const signal = abortRef.current.signal;
 
     setLoading(true);
+    setNotFound(false);
+    setCompany(null);
 
     Promise.all([
-      axios.get(`/api/companies/${id}`, { signal }),
+      axios.get(`/api/companies/${id}`, { signal }),  //signal sirf syntax nahi hai — ye AbortController ↔ request binding mechanism hai.
       axios.get(`/api/reviews/company/${id}`, { params: { sort: sortReviews }, signal }),
     ])
       .then(([compRes, revRes]) => {
         setCompany(compRes.data);
         setReviews(revRes.data);
+        setLoading(false);
       })
       .catch(err => {
         if (axios.isCancel(err) || err.name === 'CanceledError') return;
         console.error(err);
-      })
-      .finally(() => setLoading(false));
+        setNotFound(true);
+        setLoading(false);
+      });
 
     return () => abortRef.current?.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -72,13 +84,14 @@ const CompanyDetail = () => {
     fetchReviews(val);
   };
 
+  // Conditional UI states
   if (loading) return (
     <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <span style={{ fontSize: 16, color: '#6b7280' }}>Loading...</span>
     </div>
   );
 
-  if (!company) return (
+  if (notFound || (!loading && !company)) return (
     <div style={{ minHeight: '100vh', background: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <span style={{ fontSize: 16, color: '#ef4444' }}>Company not found.</span>
     </div>
@@ -170,6 +183,7 @@ const CompanyDetail = () => {
           </div>
 
           {/* Review Form */}
+          {/* Auth based UI rendering */}
           {user ? (
             <div style={{ marginBottom: 24 }}>
               <h2 style={{ fontSize: 18, fontWeight: 700, color: '#111827', marginBottom: 14 }}>Write a Review</h2>
